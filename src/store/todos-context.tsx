@@ -1,7 +1,8 @@
 "use client";
 import { createContext, useState } from "react";
 import { TODOS } from "@/store/TODOS";
-import { Todo } from "@/Types/types";
+import { TASKS } from "@/store/TASKS";
+import { Todo, Task } from "@/Types/types";
 
 export type updateDataParam = {
   rowIndex: number;
@@ -11,14 +12,16 @@ export type updateDataParam = {
 
 type TodosContextObj = {
   todos: Todo[];
-  viewDetails: () => void;
+  tasks: Task[];
   updateData: ({ rowIndex, columnId, value }: updateDataParam) => void;
+  updateTasks: () => void;
 };
 
 export const TodosContext = createContext<TodosContextObj>({
   todos: [],
-  viewDetails: () => {},
+  tasks: [],
   updateData: ({ rowIndex, columnId, value }: updateDataParam) => {},
+  updateTasks: () => {},
 });
 
 export default function TodosContextProvider({
@@ -27,6 +30,7 @@ export default function TodosContextProvider({
   children: React.ReactNode;
 }) {
   const [todos, setTodos] = useState<Todo[]>(TODOS);
+  const [tasks, setTasks] = useState<Task[]>(TASKS);
 
   function updateData({ rowIndex, columnId, value }: updateDataParam) {
     setTodos((prev) =>
@@ -36,14 +40,15 @@ export default function TodosContextProvider({
     );
   }
 
-  function viewDetails() {
-    console.log("Viewing Details");
+  function updateTasks() {
+    console.log("Updating Task");
   }
 
   const contextValue: TodosContextObj = {
     todos,
-    viewDetails,
+    tasks,
     updateData,
+    updateTasks,
   };
 
   return (

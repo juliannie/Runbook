@@ -10,6 +10,15 @@ export type Todo = {
   comment: string;
 };
 
+export type Task = {
+  id: number;
+  displayDay: number[];
+  frequency: "D" | "W" | "M" | "Q" | "Y";
+  task: string;
+  description: string;
+  deadline: number[];
+};
+
 export type TableCellParams = {
   getValue: () => any;
   row: Row<Todo>;
