@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Navigation() {
   return (
-    <nav className="pb-8 text-2xl w-11/12">
+    <nav className="container pb-8 pt-4 text-2xl w-11/12">
       <ul className="flex justify-between gap-12">
         <li>
           <Link href={"/"}>Runbook</Link>
