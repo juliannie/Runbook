@@ -32,12 +32,12 @@ import { TodosContext } from "@/store/todos-context";
 // }
 
 export default function DemoPage() {
-  const { todos } = useContext(TodosContext);
-  console.log(todos);
+  const { todos, updateData } = useContext(TodosContext);
+  // console.log(todos);
 
   return (
     <div className="container mx-auto py-10">
-      <DataTable columns={columns} data={todos} />
+      <DataTable columns={columns} data={todos} updateData={updateData} />
     </div>
   );
 }

@@ -6,7 +6,7 @@ export type Todo = {
   task: string;
   description: string;
   assignedTo: string;
-  status: "pending" | "processing" | "success" | "failed";
+  status: "pending" | "processing" | "completed" | "failed";
   comment: string;
 };
 export const TODOS: Todo[] = [
@@ -44,7 +44,7 @@ export const TODOS: Todo[] = [
     task: "AGI04",
     description: "Send reports for AGI04",
     assignedTo: "Julian",
-    status: "success",
+    status: "completed",
     comment: "This is a test 4",
   },
   {
@@ -56,4 +56,11 @@ export const TODOS: Todo[] = [
     status: "failed",
     comment: "This is a test 5",
   },
+];
+
+export const STATUSES: string[] = [
+  "pending",
+  "processing",
+  "completed",
+  "failed",
 ];

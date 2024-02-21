@@ -2,16 +2,22 @@
 import { createContext, useState } from "react";
 import { Todo, TODOS } from "@/store/TODOS";
 
+export type updateDataParam = {
+  rowIndex: number;
+  columnId: string;
+  value: string;
+};
+
 type TodosContextObj = {
   todos: Todo[];
   viewDetails: () => void;
-  changeStatus: () => void;
+  updateData: ({ rowIndex, columnId, value }: updateDataParam) => void;
 };
 
 export const TodosContext = createContext<TodosContextObj>({
   todos: [],
   viewDetails: () => {},
-  changeStatus: () => {},
+  updateData: ({ rowIndex, columnId, value }: updateDataParam) => {},
 });
 
 export default function TodosContextProvider({
@@ -21,8 +27,12 @@ export default function TodosContextProvider({
 }) {
   const [todos, setTodos] = useState<Todo[]>(TODOS);
 
-  function changeStatus() {
-    console.log("Changing Status");
+  function updateData({ rowIndex, columnId, value }: updateDataParam) {
+    setTodos((prev) =>
+      prev.map((todo, index) =>
+        index === rowIndex ? { ...todo, [columnId]: value } : todo
+      )
+    );
   }
 
   function viewDetails() {
@@ -32,7 +42,7 @@ export default function TodosContextProvider({
   const contextValue: TodosContextObj = {
     todos,
     viewDetails,
-    changeStatus,
+    updateData,
   };
 
   return (

@@ -16,19 +16,26 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import { updateDataParam } from "@/store/todos-context";
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  updateData: ({ rowIndex, columnId, value }: updateDataParam) => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  updateData,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    meta: {
+      updateData,
+    },
   });
 
   return (
