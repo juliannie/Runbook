@@ -1,14 +1,6 @@
 import { generateRandomID } from "../../helpers";
+import { Todo } from "@/Types/types";
 
-export type Todo = {
-  id: string;
-  deadline: string;
-  task: string;
-  description: string;
-  assignedTo: string;
-  status: "pending" | "processing" | "completed" | "failed";
-  comment: string;
-};
 export const TODOS: Todo[] = [
   {
     id: generateRandomID(),

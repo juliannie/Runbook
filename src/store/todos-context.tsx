@@ -1,6 +1,7 @@
 "use client";
 import { createContext, useState } from "react";
-import { Todo, TODOS } from "@/store/TODOS";
+import { TODOS } from "@/store/TODOS";
+import { Todo } from "@/Types/types";
 
 export type updateDataParam = {
   rowIndex: number;

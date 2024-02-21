@@ -1,6 +1,5 @@
 "use client";
 import { columns } from "./columns";
-import { Todo } from "@/store/TODOS";
 import { DataTable } from "./data-table";
 import { useContext } from "react";
 import { TodosContext } from "@/store/todos-context";
@@ -33,7 +32,7 @@ import { TodosContext } from "@/store/todos-context";
 
 export default function DemoPage() {
   const { todos, updateData } = useContext(TodosContext);
-  // console.log(todos);
+  console.log(todos);
 
   return (
     <div className="container mx-auto py-10">

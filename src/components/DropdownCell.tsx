@@ -8,20 +8,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { STATUSES } from "@/store/TODOS";
-import { Column, Row, Table } from "@tanstack/react-table";
-import { Todo } from "@/store/TODOS";
+import { TableCellParams } from "@/Types/types";
 
 export default function DropdownCell({
   getValue,
   row,
   column,
   table,
-}: {
-  getValue: () => any;
-  row: Row<Todo>;
-  column: Column<Todo>;
-  table: any;
-}) {
+}: TableCellParams) {
   const initialValue = getValue();
   const [value, setValue] = useState(initialValue);
 
@@ -40,7 +34,6 @@ export default function DropdownCell({
       onValueChange={(e) => {
         valueChangeHandler(e);
       }}
-      // onOpenChange={valueChangeHandler}
     >
       <SelectTrigger className="w-[180px]">
         <SelectValue />
