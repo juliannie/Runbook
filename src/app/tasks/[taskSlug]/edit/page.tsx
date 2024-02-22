@@ -1,5 +1,4 @@
 "use client";
-
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { taskFormSchema } from "@/schemas";
@@ -11,8 +10,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import TaskForm from "@/components/TaskForm";
 
-export default function AddTask() {
-  const { addTask } = useContext(TodosContext);
+export default function EditTask() {
+  const { editTask } = useContext(TodosContext);
   const router = useRouter();
 
   // Define Submit Handler
@@ -28,21 +27,21 @@ export default function AddTask() {
       deadline,
     };
 
-    addTask(data);
+    editTask(data);
     router.push("/tasks");
   }
 
   return (
     <div className="mx-auto w-7/12 pb-8">
       <div className="container">
-        <h4 className="pb-8 pt-4">Add a new Task to the Database:</h4>
-        <TaskForm id="add-task" submitHandler={onSubmit} />
+        <h4 className="pb-8 pt-4">Edit Task:</h4>
+        <TaskForm id="edit-task" submitHandler={onSubmit} />
         <div className="flex justify-between pt-8">
           <Button asChild>
             <Link href="/tasks">Go Back</Link>
           </Button>
-          <Button form="add-task" type="submit">
-            Add new Task
+          <Button form="edit-task" type="submit">
+            Save Changes
           </Button>
         </div>
       </div>
