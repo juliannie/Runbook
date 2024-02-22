@@ -4,7 +4,7 @@ import { TODOS } from "@/store/TODOS";
 import { TASKS } from "@/store/TASKS";
 import { Todo, Task } from "@/Types/types";
 
-export type updateDataParam = {
+export type updateTodoDataParam = {
   rowIndex: number;
   columnId: string;
   value: string;
@@ -13,17 +13,19 @@ export type updateDataParam = {
 type TodosContextObj = {
   todos: Todo[];
   tasks: Task[];
-  updateData: ({ rowIndex, columnId, value }: updateDataParam) => void;
-  updateTasks: () => void;
+  updateTodoData: ({ rowIndex, columnId, value }: updateTodoDataParam) => void;
   addTask: (data: Task) => void;
+  deleteTask: (id: string) => void;
+  editTask: (data: Task) => void;
 };
 
 export const TodosContext = createContext<TodosContextObj>({
   todos: [],
   tasks: [],
-  updateData: ({ rowIndex, columnId, value }: updateDataParam) => {},
-  updateTasks: () => {},
-  addTask: () => {},
+  updateTodoData: ({ rowIndex, columnId, value }: updateTodoDataParam) => {},
+  deleteTask: (id: string) => {},
+  addTask: (data: Task) => {},
+  editTask: (data: Task) => {},
 });
 
 export default function TodosContextProvider({
@@ -34,7 +36,7 @@ export default function TodosContextProvider({
   const [todos, setTodos] = useState<Todo[]>(TODOS);
   const [tasks, setTasks] = useState<Task[]>(TASKS);
 
-  function updateData({ rowIndex, columnId, value }: updateDataParam) {
+  function updateTodoData({ rowIndex, columnId, value }: updateTodoDataParam) {
     setTodos((prev) =>
       prev.map((todo, index) =>
         index === rowIndex ? { ...todo, [columnId]: value } : todo
@@ -47,16 +49,22 @@ export default function TodosContextProvider({
     setTasks((prev) => [...prev, data]);
   }
 
-  function updateTasks() {
-    console.log("Updating Task");
+  function deleteTask(id: string) {
+    console.log("deleting Task with ID", id);
+    setTasks((prev) => prev.filter((task) => task.id !== id));
+  }
+
+  function editTask(data: Task) {
+    console.log(data);
   }
 
   const contextValue: TodosContextObj = {
     todos,
     tasks,
-    updateData,
-    updateTasks,
+    updateTodoData,
     addTask,
+    deleteTask,
+    editTask,
   };
 
   return (

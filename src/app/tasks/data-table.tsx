@@ -18,18 +18,20 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { updateDataParam } from "@/store/todos-context";
+import { updateTodoDataParam } from "@/store/todos-context";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  updateData: ({ rowIndex, columnId, value }: updateDataParam) => void;
+  deleteTask: (id: string) => void;
+  editTask: () => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  updateData,
+  deleteTask,
+  editTask,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
 
@@ -43,7 +45,8 @@ export function DataTable<TData, TValue>({
       sorting,
     },
     meta: {
-      updateData,
+      deleteTask,
+      editTask,
     },
   });
 

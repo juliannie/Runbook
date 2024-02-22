@@ -21,7 +21,7 @@ export default function DropdownCell({
 
   const valueChangeHandler = (e: string) => {
     setValue(e);
-    table.options.meta?.updateData({
+    table.options.meta?.updateTodoData({
       rowIndex: row.index,
       columnId: column.id,
       value: e,

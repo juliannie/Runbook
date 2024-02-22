@@ -13,8 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import DropdownCell from "@/components/DropdownCell";
-import EditableCell from "@/components/EditableCell";
+import ActionMenu from "@/components/ActionMenu";
 
 export const columns: ColumnDef<Task>[] = [
   {
@@ -100,5 +99,9 @@ export const columns: ColumnDef<Task>[] = [
         </Button>
       );
     },
+  },
+  {
+    id: "actions",
+    cell: ActionMenu,
   },
 ];

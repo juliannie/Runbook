@@ -21,7 +21,7 @@ export type Task = {
 
 export type TableCellParams = {
   getValue: () => any;
-  row: Row<Todo>;
-  column: Column<Todo>;
+  row: Row<Todo> | Row<Task>;
+  column: Column<Todo> | Column<Task>;
   table: any;
 };

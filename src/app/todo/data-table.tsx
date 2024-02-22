@@ -18,18 +18,19 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { updateDataParam } from "@/store/todos-context";
+import { updateTodoDataParam } from "@/store/todos-context";
+import { Todo } from "@/Types/types";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  updateData: ({ rowIndex, columnId, value }: updateDataParam) => void;
+  updateTodoData: ({ rowIndex, columnId, value }: updateTodoDataParam) => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  updateData,
+  updateTodoData,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
 
@@ -43,7 +44,7 @@ export function DataTable<TData, TValue>({
       sorting,
     },
     meta: {
-      updateData,
+      updateTodoData,
     },
   });
 

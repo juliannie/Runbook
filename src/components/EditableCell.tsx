@@ -13,7 +13,7 @@ export default function EditableCell({
   // console.log("Column");
   // console.log(column.id);
   const onBlur = () => {
-    table.options.meta?.updateData({
+    table.options.meta?.updateTodoData({
       rowIndex: row.index,
       columnId: column.id,
       value,
