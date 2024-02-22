@@ -32,7 +32,8 @@ import { TodosContext } from "@/store/todos-context";
 
 export default function DemoPage() {
   const { todos, updateTodoData } = useContext(TodosContext);
-  console.log(todos);
+  // console.log("Todos");
+  // console.log(todos);
 
   return (
     <div className="container mx-auto py-10">

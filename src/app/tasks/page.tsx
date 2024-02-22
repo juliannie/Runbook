@@ -34,9 +34,8 @@ import Link from "next/link";
 
 export default function Tasks() {
   const { tasks, deleteTask, editTask } = useContext(TodosContext);
-  console.log("TASKS");
-  console.log(tasks);
-
+  // console.log("Tasks");
+  // console.log(tasks);
   return (
     <div className="container">
       <div className="flex justify-end mx-auto">

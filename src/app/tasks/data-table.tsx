@@ -18,13 +18,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { updateTodoDataParam } from "@/store/todos-context";
+import { Task } from "@/Types/types";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   deleteTask: (id: string) => void;
-  editTask: () => void;
+  editTask: (data: Task) => void;
 }
 
 export function DataTable<TData, TValue>({
