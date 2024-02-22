@@ -1,4 +1,4 @@
-import { generateRandomID } from "../../helpers";
+import { generateRandomID } from "../helpers";
 import { Todo } from "@/Types/types";
 
 export const TODOS: Todo[] = [

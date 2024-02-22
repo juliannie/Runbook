@@ -11,7 +11,7 @@ export type Todo = {
 };
 
 export type Task = {
-  id: number;
+  id: string;
   displayDay: number[];
   frequency: "D" | "W" | "M" | "Q" | "Y";
   task: string;

@@ -15,6 +15,7 @@ type TodosContextObj = {
   tasks: Task[];
   updateData: ({ rowIndex, columnId, value }: updateDataParam) => void;
   updateTasks: () => void;
+  addTask: (data: Task) => void;
 };
 
 export const TodosContext = createContext<TodosContextObj>({
@@ -22,6 +23,7 @@ export const TodosContext = createContext<TodosContextObj>({
   tasks: [],
   updateData: ({ rowIndex, columnId, value }: updateDataParam) => {},
   updateTasks: () => {},
+  addTask: () => {},
 });
 
 export default function TodosContextProvider({
@@ -40,6 +42,11 @@ export default function TodosContextProvider({
     );
   }
 
+  function addTask(data: Task) {
+    console.log("Adding task");
+    setTasks((prev) => [...prev, data]);
+  }
+
   function updateTasks() {
     console.log("Updating Task");
   }
@@ -49,6 +56,7 @@ export default function TodosContextProvider({
     tasks,
     updateData,
     updateTasks,
+    addTask,
   };
 
   return (

@@ -4,6 +4,7 @@ import { DataTable } from "./data-table";
 import { useContext } from "react";
 import { TodosContext } from "@/store/todos-context";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 // async function getData(): Promise<Todo[]> {
 //   // Fetch data from your API here.
@@ -39,7 +40,9 @@ export default function Tasks() {
   return (
     <div className="container">
       <div className="flex justify-end mx-auto">
-        <Button>Add Task</Button>
+        <Button asChild>
+          <Link href="/tasks/add">Add Task</Link>
+        </Button>
       </div>
       <div className="mx-auto py-10">
         <DataTable columns={columns} data={tasks} updateData={updateTasks} />

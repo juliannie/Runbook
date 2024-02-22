@@ -1,9 +1,9 @@
-import { generateRandomID } from "../../helpers";
+import { generateRandomID } from "../helpers";
 import { Task } from "@/Types/types";
 
 export const TASKS: Task[] = [
   {
-    id: 1,
+    id: "1",
     displayDay: [1],
     frequency: "D",
     task: "AGI01",
@@ -12,7 +12,7 @@ export const TASKS: Task[] = [
   },
 
   {
-    id: 2,
+    id: "2",
     displayDay: [1],
     frequency: "W",
     task: "AGI02",
@@ -20,7 +20,7 @@ export const TASKS: Task[] = [
     deadline: [1],
   },
   {
-    id: 3,
+    id: "3",
     displayDay: [1],
     frequency: "Q",
     task: "AGI03",
@@ -28,7 +28,7 @@ export const TASKS: Task[] = [
     deadline: [1],
   },
   {
-    id: 4,
+    id: "4",
     displayDay: [1],
     frequency: "M",
     task: "AGI04",
@@ -36,7 +36,7 @@ export const TASKS: Task[] = [
     deadline: [1],
   },
   {
-    id: 5,
+    id: "5",
     displayDay: [1],
     frequency: "Y",
     task: "AGI05",
@@ -44,7 +44,7 @@ export const TASKS: Task[] = [
     deadline: [1],
   },
   {
-    id: 6,
+    id: "6",
     displayDay: [1, 2, 3],
     frequency: "M",
     task: "AGI06",
@@ -52,7 +52,7 @@ export const TASKS: Task[] = [
     deadline: [3],
   },
   {
-    id: 7,
+    id: "7",
     displayDay: [2, 3, 4],
     frequency: "W",
     task: "AGI07",
