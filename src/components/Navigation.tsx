@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ModeToggle } from "./theme/theme-mode-toggle";
 
 export default function Navigation() {
   const path = usePathname();
@@ -37,6 +38,9 @@ export default function Navigation() {
             >
               Tasks
             </Link>
+          </li>
+          <li>
+            <ModeToggle />
           </li>
         </div>
       </ul>

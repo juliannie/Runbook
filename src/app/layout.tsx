@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Navigation from "@/components/Navigation";
 import TodosContextProvider from "@/store/todos-context";
+import { ThemeProvider } from "@/components/theme/theme-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,10 +20,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <TodosContextProvider>
-          <Navigation />
-          {children}
-        </TodosContextProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <TodosContextProvider>
+            <Navigation />
+            {children}
+          </TodosContextProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

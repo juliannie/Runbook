@@ -24,14 +24,12 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   deleteTask: (id: string) => void;
-  editTask: (data: Task) => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   deleteTask,
-  editTask,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
 
@@ -46,7 +44,6 @@ export function DataTable<TData, TValue>({
     },
     meta: {
       deleteTask,
-      editTask,
     },
   });
 

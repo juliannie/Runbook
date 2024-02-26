@@ -33,7 +33,7 @@ import Link from "next/link";
 // }
 
 export default function Tasks() {
-  const { tasks, deleteTask, editTask } = useContext(TodosContext);
+  const { tasks, deleteTask } = useContext(TodosContext);
   // console.log("Tasks");
   // console.log(tasks);
   return (
@@ -44,12 +44,7 @@ export default function Tasks() {
         </Button>
       </div>
       <div className="mx-auto py-10">
-        <DataTable
-          columns={columns}
-          data={tasks}
-          deleteTask={deleteTask}
-          editTask={editTask}
-        />
+        <DataTable columns={columns} data={tasks} deleteTask={deleteTask} />
       </div>
     </div>
   );

@@ -13,24 +13,35 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Task } from "@/Types/types";
 
 export default function TaskForm({
   id,
   submitHandler,
+  task,
 }: {
   id: string;
   submitHandler: (values: any) => void;
+  task: Task;
 }) {
   // Define form
   const form = useForm<z.infer<typeof taskFormSchema>>({
     resolver: zodResolver(taskFormSchema),
-    defaultValues: {
-      displayDay: "",
-      frequency: "",
-      task: "",
-      description: "",
-      deadline: "",
-    },
+    defaultValues: task
+      ? {
+          displayDay: String(task.displayDay),
+          frequency: task.frequency,
+          task: task.task,
+          description: task.description,
+          deadline: String(task.deadline),
+        }
+      : {
+          displayDay: "",
+          frequency: "",
+          task: "",
+          description: "",
+          deadline: "",
+        },
   });
   return (
     <Form {...form}>

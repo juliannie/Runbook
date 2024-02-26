@@ -9,10 +9,15 @@ import { Task } from "@/Types/types";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import TaskForm from "@/components/TaskForm";
+import { usePathname } from "next/navigation";
 
-export default function EditTask() {
-  const { editTask } = useContext(TodosContext);
+export default function EditTask({ params }: { params: { taskSlug: string } }) {
+  const { editTask, tasks } = useContext(TodosContext);
+  const { taskSlug: taskId } = params;
+  const [task] = tasks.filter((task) => task.id === taskId);
   const router = useRouter();
+  console.log("Pathname", taskId);
+  console.log(task);
 
   // Define Submit Handler
   function onSubmit(values: z.infer<typeof taskFormSchema>) {
@@ -35,7 +40,7 @@ export default function EditTask() {
     <div className="mx-auto w-7/12 pb-8">
       <div className="container">
         <h4 className="pb-8 pt-4">Edit Task:</h4>
-        <TaskForm id="edit-task" submitHandler={onSubmit} />
+        <TaskForm id="edit-task" submitHandler={onSubmit} task={task} />
         <div className="flex justify-between pt-8">
           <Button asChild>
             <Link href="/tasks">Go Back</Link>

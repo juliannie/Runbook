@@ -8,6 +8,8 @@ import {
 import { MoreHorizontal } from "lucide-react";
 import { Button } from "./ui/button";
 import { TableCellParams } from "@/Types/types";
+import { redirect } from "next/navigation";
+import Link from "next/link";
 
 export default function ActionMenu({
   getValue,
@@ -15,15 +17,11 @@ export default function ActionMenu({
   column,
   table,
 }: TableCellParams) {
+  const { id } = row.original;
+
   function deleteTaskHandler() {
-    const { id } = row.original;
     table.options.meta?.deleteTask(id);
     console.log("Deleting task", id);
-  }
-
-  function editTaskHandler() {
-    const task = row.original;
-    table.options.meta?.editTask(task);
   }
 
   return (
@@ -37,7 +35,9 @@ export default function ActionMenu({
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         {/* <DropdownMenuSeparator /> */}
-        <DropdownMenuItem onClick={editTaskHandler}>Edit Task</DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link href={`/tasks/${id}/edit`}>Edit Task</Link>
+        </DropdownMenuItem>
 
         <DropdownMenuItem onClick={deleteTaskHandler}>
           Delete Task
