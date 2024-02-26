@@ -18,11 +18,11 @@ import { Task } from "@/Types/types";
 export default function TaskForm({
   id,
   submitHandler,
-  task,
+  task = undefined,
 }: {
   id: string;
   submitHandler: (values: any) => void;
-  task: Task;
+  task: Task | undefined;
 }) {
   // Define form
   const form = useForm<z.infer<typeof taskFormSchema>>({

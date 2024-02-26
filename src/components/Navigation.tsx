@@ -23,6 +23,7 @@ export default function Navigation() {
             alt="Futuristic notebook"
             width={80}
             height={80}
+            priority
           />
         </Link>
         <NavigationMenu>
