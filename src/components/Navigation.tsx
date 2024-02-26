@@ -2,48 +2,59 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ModeToggle } from "./theme/theme-mode-toggle";
+import { navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+} from "@/components/ui/navigation-menu";
+import RunbookLogo from "../../public/Runbook.png";
+import Image from "next/image";
 
 export default function Navigation() {
   const path = usePathname();
   return (
-    <nav className="container pb-8 pt-4 text-2xl w-11/12">
-      <ul className="flex justify-between gap-12">
-        <li>
-          <Link
-            className={`scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl text-foreground ${
-              path === "/" ? "" : "opacity-100"
-            }`}
-            href={"/"}
-          >
-            Runbook
-          </Link>
-        </li>
-        <div className="flex gap-5">
-          <li>
-            <Link
-              className={`scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0 text-foreground ${
-                path === "/todo" ? "" : "opacity-60"
-              }`}
-              href={"/todo"}
-            >
-              ToDo
-            </Link>
-          </li>
-          <li>
-            <Link
-              className={`scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0 text-foreground ${
-                path === "/tasks" ? "" : "opacity-60"
-              }`}
-              href={"/tasks"}
-            >
-              Tasks
-            </Link>
-          </li>
-          <li>
-            <ModeToggle />
-          </li>
-        </div>
-      </ul>
+    <nav className="flex items-center container pt-4 justify-between">
+      <div className="flex">
+        <Link href={"/"}>
+          <Image
+            src={RunbookLogo}
+            alt="Futuristic notebook"
+            width={80}
+            height={80}
+          />
+        </Link>
+        <NavigationMenu>
+          <NavigationMenuList>
+            <NavigationMenuItem>
+              <Link href="/" legacyBehavior passHref>
+                <NavigationMenuLink
+                  className={navigationMenuTriggerStyle()}
+                ></NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+
+            <NavigationMenuItem>
+              <Link href="/todo" legacyBehavior passHref>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                  My Todos
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+
+            <NavigationMenuItem>
+              <Link href="/tasks" legacyBehavior passHref>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                  My Tasks
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+      </div>
+
+      <ModeToggle />
     </nav>
   );
 }

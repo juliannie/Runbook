@@ -38,12 +38,12 @@ export default function Tasks() {
   // console.log(tasks);
   return (
     <div className="container">
-      <div className="flex justify-end mx-auto">
+      <div className="flex justify-end mx-auto pt-4">
         <Button asChild>
           <Link href="/tasks/add">Add Task</Link>
         </Button>
       </div>
-      <div className="mx-auto py-10">
+      <div className="mx-auto py-3">
         <DataTable columns={columns} data={tasks} deleteTask={deleteTask} />
       </div>
     </div>
