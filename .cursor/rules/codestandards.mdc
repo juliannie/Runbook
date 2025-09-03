@@ -1,0 +1,12 @@
+---
+description: TypeScript and coding standards
+globs:
+alwaysApply: true
+---
+
+- Use TypeScript with "strict": true. No `any`.
+- Use functional components and hooks only.
+- State: Local → component; server cache → TanStack Query; cross-component → Zustand/Context.
+- Forms: react-hook-form + Zod resolvers.
+- Commits: Conventional Commits.
+- Modules must be single-responsibility and maintainable.

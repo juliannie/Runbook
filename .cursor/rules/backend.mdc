@@ -1,0 +1,19 @@
+---
+description: Backend and data rules
+globs:
+  - "backend/**"
+  - "server/**"
+  - "apps/api/**"
+  - "src/api/**"
+  - "src/server/**"
+  - "prisma/**"
+  - "db/**"
+alwaysApply: false
+---
+
+- Prefer NestJS; else modular Express.
+- Prisma ORM with PostgreSQL; explicit schema; migrations and seed scripts.
+- APIs: tRPC when possible; else REST with OpenAPI + Zod/DTO validation.
+- Validate inputs/outputs; use idempotency keys for mutating endpoints.
+- Avoid N+1; index critical fields; paginate large queries.
+- Use Redis for caching/queues when needed.

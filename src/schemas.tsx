@@ -27,7 +27,7 @@ export const taskFormSchema = z.object({
     .string()
     .min(1, { message: "Description cannot be empty." })
     .min(5, { message: "Description must have at least 5 characters." })
-    .max(250, { message: "Description cannot be empty." }),
+    .max(250, { message: "Description must not exceed 250 characters." }),
   deadline: z
     .string()
     .min(1, {

@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Navigation from "@/components/Navigation";
-import TodosContextProvider from "@/store/todos-context";
-import { ThemeProvider } from "@/components/theme/theme-provider";
+import Providers from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,18 +17,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <TodosContextProvider>
-            <Navigation />
-            {children}
-          </TodosContextProvider>
-        </ThemeProvider>
+      <body className={`${inter.className} min-h-[100svh]`}>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

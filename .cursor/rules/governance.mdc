@@ -1,0 +1,16 @@
+---
+description: Governance, testing, and quality gates
+globs:
+alwaysApply: true
+---
+
+Workflow
+
+- Each feature must include structure, runnable code, setup steps, rationale, and at least one test.
+- Keep docs current (README or /docs/feature.md).
+
+Testing & CI
+
+- Unit: Vitest/Jest; UI: React Testing Library; e2e: Playwright (web) / Detox (mobile).
+- CI must run typecheck, lint, tests, and build.
+- Pre-commit hooks: lint, typecheck, and quick tests.

@@ -1,0 +1,18 @@
+---
+description: Performance and caching playbook (agent requested)
+globs:
+alwaysApply: false
+---
+
+Web
+
+- Stream server components; code-split; optimize images.
+
+Mobile
+
+- Avoid heavy re-renders; virtualize/memoize lists; lazy-load screens.
+
+Backend
+
+- Cache hot reads in Redis; invalidate on writes.
+- Use keyset pagination for large datasets.

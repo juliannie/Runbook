@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+.next/
+dist/
+
+# Databases
+prisma/dev.db*
+
+# Caches
+.turbo/
+.vercel/
+coverage/

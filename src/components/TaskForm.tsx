@@ -14,6 +14,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Task } from "@/Types/types";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { FREQUENCIES } from "@/Types/constants";
 
 export default function TaskForm({
   id,
@@ -73,9 +81,20 @@ export default function TaskForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Frequency</FormLabel>
-              <FormControl>
-                <Input placeholder="D|W|M|Q|Y" {...field} />
-              </FormControl>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select frequency" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {FREQUENCIES.map((freq) => (
+                    <SelectItem key={freq} value={freq}>
+                      {freq}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <FormDescription>Frequency to display task.</FormDescription>
               <FormMessage />
             </FormItem>
