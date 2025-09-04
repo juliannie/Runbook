@@ -1,47 +1,40 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+// src/lib/session.ts
+import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 
-export interface SessionUser {
+/** Minimal shape you can rely on across the app */
+export type SessionUser = {
   id: string;
-  email: string;
-  name?: string;
-  role: string;
-}
+  email: string | null;
+  name?: string | null;
+  role?: string | null; // present if you add it to the session callback
+};
 
+/** Returns the current user or null (no throw, no redirect). */
 export async function getSessionUser(): Promise<SessionUser | null> {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
+  const u = session?.user as SessionUser | undefined;
 
-  if (!session?.user) {
-    return null;
-  }
+  if (!u?.id) return null;
 
+  // Provide safe fallbacks
   return {
-    id: session.user.id,
-    email: session.user.email!,
-    name: session.user.name || undefined,
-    role: session.user.role || "member",
+    id: u.id,
+    email: u.email ?? null,
+    name: u.name ?? null,
+    role: u.role ?? null,
   };
 }
 
-export async function requireAuth(): Promise<SessionUser> {
+/**
+ * Ensures an authenticated user in server contexts.
+ * If unauthenticated, redirects to sign-in (optionally with a callbackUrl).
+ */
+export async function requireAuth(callbackUrl?: string): Promise<SessionUser> {
   const user = await getSessionUser();
-
   if (!user) {
-    redirect("/auth/signin");
+    const target = callbackUrl ?? "/todo";
+    redirect(`/auth/signin?callbackUrl=${encodeURIComponent(target)}`);
   }
-
-  return user;
-}
-
-export async function requireRole(
-  requiredRole: "admin" | "member"
-): Promise<SessionUser> {
-  const user = await requireAuth();
-
-  if (requiredRole === "admin" && user.role !== "admin") {
-    throw new Error("Insufficient permissions");
-  }
-
   return user;
 }

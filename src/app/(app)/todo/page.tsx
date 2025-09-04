@@ -1,4 +1,6 @@
+// src/app/(app)/todo/page.tsx
 "use client";
+
 import { useMemo } from "react";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
@@ -6,10 +8,10 @@ import { useMyTasks } from "@/hooks/useMyTasks";
 import { useTaskOccurrences } from "@/hooks/useTaskOccurrences";
 import { isDue } from "@/lib/isDue";
 
-export default function DemoPage() {
+export default function TodoPage() {
   const { data: allTasks = [], isLoading, error } = useMyTasks();
 
-  // Filter tasks that are due today using business day logic
+  // Compute "today" once in UTC (drop time)
   const todayUTC = useMemo(() => {
     const now = new Date();
     return new Date(
@@ -17,22 +19,23 @@ export default function DemoPage() {
     );
   }, []);
 
-  const dueTasks = useMemo(() => {
-    return allTasks.filter((task) => isDue(todayUTC, task));
-  }, [allTasks, todayUTC]);
+  // Tasks due today (using business-day logic)
+  const dueTasks = useMemo(
+    () => allTasks.filter((task) => isDue(todayUTC, task)),
+    [allTasks, todayUTC]
+  );
 
-  // Load existing TaskOccurrence data for today
+  // Load occurrences for today
   const { data: occurrences = [] } = useTaskOccurrences(todayUTC.toISOString());
 
-  // Convert Task to Todo format and merge with TaskOccurrence data
+  // Merge tasks with occurrences to build "todos"
   const todos = useMemo(() => {
     return dueTasks.map((task) => {
-      // Find existing occurrence for this task
       const occurrence = occurrences.find((occ: any) => occ.taskId === task.id);
 
       return {
         id: task.id,
-        deadline: new Date().toDateString(), // Keep existing format
+        deadline: todayUTC.toDateString(),
         task: task.task,
         description: task.description,
         assignedTo: occurrence?.assigneeName || task.assignedTo || "",
@@ -44,15 +47,12 @@ export default function DemoPage() {
         comment: occurrence?.comment || task.comment || "",
       };
     });
-  }, [dueTasks, occurrences]);
-
-  // No longer needed - cells handle persistence directly
-  const updateTodoData = () => {};
+  }, [dueTasks, occurrences, todayUTC]);
 
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-10">
-        <div className="text-sm text-muted-foreground">Loading tasks...</div>
+        <div className="text-sm text-muted-foreground">Loading tasks…</div>
       </div>
     );
   }
@@ -69,11 +69,7 @@ export default function DemoPage() {
 
   return (
     <div className="container mx-auto px-4 py-10">
-      <DataTable
-        columns={columns}
-        data={todos}
-        updateTodoData={updateTodoData}
-      />
+      <DataTable columns={columns} data={todos} updateTodoData={() => {}} />
     </div>
   );
 }

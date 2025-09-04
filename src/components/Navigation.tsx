@@ -10,24 +10,32 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
-import RunbookLogo from "../../public/Runbook.png";
-import Image from "next/image";
 
 export default function Navigation() {
   const path = usePathname();
+
   return (
     <nav className="flex items-center container mx-auto px-4 pt-4 justify-between">
-      <div className="flex items-center">
-        <Link href={"/"}>
-          <Image
-            src={RunbookLogo}
-            alt="Futuristic notebook"
-            width={60}
-            height={60}
-            className="sm:w-20 sm:h-20"
-            priority
-          />
+      <div className="flex items-center space-x-3">
+        <Link href={"/"} aria-label="Runbook Home">
+          {/* Theme-aware text logo:
+             - Light: bg-slate-900 / text-white
+             - Dark:  bg-white / text-slate-900
+          */}
+          <span
+            className="
+              inline-flex h-10 w-10 items-center justify-center rounded-xl
+              bg-slate-900 text-white
+              dark:bg-white dark:text-slate-900
+              font-bold text-lg select-none
+              ring-1 ring-transparent hover:ring-slate-300 dark:hover:ring-slate-600
+              transition-colors duration-200
+            "
+          >
+            RB
+          </span>
         </Link>
+
         <NavigationMenu>
           <NavigationMenuList className="flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
             <NavigationMenuItem>

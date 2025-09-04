@@ -1,50 +1,46 @@
+// src/app/api/mytasks/route.ts
 export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { requireAuth } from "@/lib/session";
 
 type Frequency = "D" | "W" | "M" | "Q" | "Y";
 
-function isWeekend(date: Date) {
+// --- Working-day utilities (UTC-safe) ---
+const isWeekend = (date: Date) => {
   const d = date.getUTCDay(); // 0=Sun..6=Sat
   return d === 0 || d === 6;
-}
+};
 
-function addDaysUTC(date: Date, n: number) {
+const addDaysUTC = (date: Date, n: number) => {
   const d = new Date(date.getTime());
   d.setUTCDate(d.getUTCDate() + n);
   return d;
-}
+};
 
-function startOfMonthUTC(date: Date) {
-  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1));
-}
-function endOfMonthUTC(date: Date) {
-  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 0));
-}
+const startOfMonthUTC = (date: Date) =>
+  new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1));
+const endOfMonthUTC = (date: Date) =>
+  new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 0));
 
-function startOfQuarterUTC(date: Date) {
+const startOfQuarterUTC = (date: Date) => {
   const qStartMonth = Math.floor(date.getUTCMonth() / 3) * 3;
   return new Date(Date.UTC(date.getUTCFullYear(), qStartMonth, 1));
-}
-function endOfQuarterUTC(date: Date) {
+};
+const endOfQuarterUTC = (date: Date) => {
   const qStart = startOfQuarterUTC(date);
-  const qEnd = new Date(
+  return new Date(
     Date.UTC(qStart.getUTCFullYear(), qStart.getUTCMonth() + 3, 0)
   );
-  return qEnd;
-}
+};
 
-function startOfYearUTC(date: Date) {
-  return new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
-}
-function endOfYearUTC(date: Date) {
-  return new Date(Date.UTC(date.getUTCFullYear(), 12, 0));
-}
+const startOfYearUTC = (date: Date) =>
+  new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+const endOfYearUTC = (date: Date) =>
+  new Date(Date.UTC(date.getUTCFullYear(), 12, 0));
 
-function listWorkingDays(start: Date, end: Date) {
-  // inclusive range by calendar day
+const listWorkingDays = (start: Date, end: Date) => {
   const days: Date[] = [];
   let d = new Date(
     Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate())
@@ -57,42 +53,39 @@ function listWorkingDays(start: Date, end: Date) {
     d = addDaysUTC(d, 1);
   }
   return days;
-}
+};
 
-function isoWeekday(date: Date) {
+const isoWeekday = (date: Date) => {
   // 1=Mon..7=Sun
   const day = date.getUTCDay();
   return day === 0 ? 7 : day;
-}
+};
 
+// --- Due-today logic (supports negatives: -1 last workday, etc.) ---
 function isDueToday(
   todayUTC: Date,
   frequency: Frequency,
-  displayDay: number[] // business-day indices per frequency unit; negatives allowed
+  displayDay: number[] = []
 ): boolean {
   if (frequency === "D") {
-    // every working day
     return !isWeekend(todayUTC);
   }
 
   if (frequency === "W") {
-    // displayDay contains ISO weekdays (1=Mon..7=Sun). Allow -1 to mean "last working day of week" (Fri)
+    // ISO weekdays (1..7); treat -1 as "last working day" (Fri)
     const wd = isoWeekday(todayUTC);
     const normalized = new Set<number>();
-    for (const n of displayDay ?? []) {
-      if (n === -1) normalized.add(5); // Fri as last working day
+    for (const n of displayDay) {
+      if (n === -1) normalized.add(5); // Friday as last working day
       else normalized.add(n);
     }
     return normalized.has(wd);
   }
 
-  if (frequency === "M") {
-    const start = startOfMonthUTC(todayUTC);
-    const end = endOfMonthUTC(todayUTC);
+  const calcByWorkIndex = (start: Date, end: Date) => {
     const workdays = listWorkingDays(start, end);
-    // map positives and negatives to 1-based indices
     const indices = new Set<number>(
-      (displayDay ?? []).map((n) => (n > 0 ? n : workdays.length + 1 + n))
+      displayDay.map((n) => (n > 0 ? n : workdays.length + 1 + n))
     );
     const idxToday = workdays.findIndex(
       (d) =>
@@ -101,67 +94,54 @@ function isDueToday(
         d.getUTCDate() === todayUTC.getUTCDate()
     );
     return idxToday >= 0 && indices.has(idxToday + 1); // 1-based
-  }
+  };
 
+  if (frequency === "M") {
+    return calcByWorkIndex(startOfMonthUTC(todayUTC), endOfMonthUTC(todayUTC));
+  }
   if (frequency === "Q") {
-    const start = startOfQuarterUTC(todayUTC);
-    const end = endOfQuarterUTC(todayUTC);
-    const workdays = listWorkingDays(start, end);
-    const indices = new Set<number>(
-      (displayDay ?? []).map((n) => (n > 0 ? n : workdays.length + 1 + n))
+    return calcByWorkIndex(
+      startOfQuarterUTC(todayUTC),
+      endOfQuarterUTC(todayUTC)
     );
-    const idxToday = workdays.findIndex(
-      (d) =>
-        d.getUTCFullYear() === todayUTC.getUTCFullYear() &&
-        d.getUTCMonth() === todayUTC.getUTCMonth() &&
-        d.getUTCDate() === todayUTC.getUTCDate()
-    );
-    return idxToday >= 0 && indices.has(idxToday + 1);
   }
-
   if (frequency === "Y") {
-    const start = startOfYearUTC(todayUTC);
-    const end = endOfYearUTC(todayUTC);
-    const workdays = listWorkingDays(start, end);
-    const indices = new Set<number>(
-      (displayDay ?? []).map((n) => (n > 0 ? n : workdays.length + 1 + n))
-    );
-    const idxToday = workdays.findIndex(
-      (d) =>
-        d.getUTCFullYear() === todayUTC.getUTCFullYear() &&
-        d.getUTCMonth() === todayUTC.getUTCMonth() &&
-        d.getUTCDate() === todayUTC.getUTCDate()
-    );
-    return idxToday >= 0 && indices.has(idxToday + 1);
+    return calcByWorkIndex(startOfYearUTC(todayUTC), endOfYearUTC(todayUTC));
   }
 
   return false;
 }
 
 export async function GET() {
-  const session = await auth();
-  const userId = session?.user?.id;
-  if (!userId)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const user = await requireAuth();
 
-  const today = new Date(); // server time; we evaluate in UTC
-  const todayUTC = new Date(
-    Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate())
-  );
+    // Evaluate "today" in UTC (drop time)
+    const now = new Date();
+    const todayUTC = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
+    );
 
-  // Pull only this user's tasks
-  const tasks = await prisma.task.findMany({
-    where: { ownerId: userId },
-    orderBy: { id: "desc" },
-  });
+    // Only this user's tasks
+    const tasks = await prisma.task.findMany({
+      where: { ownerId: user.id },
+      orderBy: { id: "desc" },
+    });
 
-  const dueToday = tasks.filter((t) =>
-    isDueToday(
-      todayUTC,
-      t.frequency as Frequency,
-      (t.displayDay as any as number[]) ?? []
-    )
-  );
+    const dueToday = tasks.filter((t) =>
+      isDueToday(
+        todayUTC,
+        t.frequency as Frequency,
+        (t.displayDay as any as number[]) ?? []
+      )
+    );
 
-  return NextResponse.json(dueToday);
+    return NextResponse.json(dueToday);
+  } catch (err) {
+    const message = (err as Error).message || "Internal Server Error";
+    return NextResponse.json(
+      { error: message },
+      { status: message === "Unauthorized" ? 401 : 500 }
+    );
+  }
 }
