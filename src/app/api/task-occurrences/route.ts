@@ -1,17 +1,22 @@
 // src/app/api/task-occurrences/route.ts
+export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { requireAuth } from "@/lib/session";
 
 /**
  * GET /api/task-occurrences?dateUTC=2025-09-03
  * Returns occurrences for the signed-in user for the given UTC calendar day.
  */
-export async function GET(req: NextRequest) {
+export async function GET(req: Request) {
   try {
-    const user = await requireAuth();
+    const session = await auth();
+    const userId = session?.user?.id;
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const { searchParams } = new URL(req.url);
     const dateUTCParam = searchParams.get("dateUTC");
@@ -37,11 +42,11 @@ export async function GET(req: NextRequest) {
     const m = parsed.getUTCMonth();
     const d = parsed.getUTCDate();
     const dayStart = new Date(Date.UTC(y, m, d, 0, 0, 0, 0));
-    const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
+    const dayEnd = new Date(Date.UTC(y, m, d + 1, 0, 0, 0, 0));
 
     const occurrences = await prisma.taskOccurrence.findMany({
       where: {
-        ownerId: user.id, // tenant isolation
+        ownerId: userId, // tenant isolation
         dateUTC: { gte: dayStart, lt: dayEnd },
       },
       include: { task: true },
@@ -50,8 +55,10 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(occurrences);
   } catch (err) {
-    const message = (err as Error).message || "Internal Server Error";
-    const status = message === "Unauthorized" ? 401 : 500;
-    return NextResponse.json({ error: message }, { status });
+    console.error("[task-occurrences][GET]", err);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

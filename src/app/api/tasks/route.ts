@@ -1,4 +1,5 @@
-// src/app/api/tasks/route.ts
+// force server render, no static cache
+export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";

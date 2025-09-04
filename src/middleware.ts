@@ -5,17 +5,16 @@ import { getToken } from "next-auth/jwt";
 // Only these are public. Everything else requires auth.
 function isPublicPath(pathname: string) {
   if (pathname === "/") return true; // landing page
-  if (pathname.startsWith("/auth")) return true; // sign-in, callbacks, etc.
+  if (pathname.startsWith("/auth")) return true; // sign-in page, etc.
   return false;
 }
 
 export async function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
 
-  // Always allow Next internals & static assets
+  // Always allow Next internals & well-known static
   if (
     pathname.startsWith("/_next") ||
-    pathname.startsWith("/assets") ||
     pathname === "/favicon.ico" ||
     pathname === "/robots.txt" ||
     pathname === "/sitemap.xml"
@@ -28,12 +27,17 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
+  // Allow preflight requests
+  if (req.method === "OPTIONS") {
+    return NextResponse.next();
+  }
+
   // Allow public routes
   if (isPublicPath(pathname)) {
     return NextResponse.next();
   }
 
-  // Protect everything else (covers all current & future app pages and APIs)
+  // Protect everything else (covers current & future app pages and APIs)
   const token = await getToken({ req, secret: process.env.AUTH_SECRET });
   if (!token) {
     const signInUrl = req.nextUrl.clone();
@@ -45,10 +49,12 @@ export async function middleware(req: NextRequest) {
   return NextResponse.next();
 }
 
-// Match *all* URLs except Next internals/static; we handle allow/deny above.
-// This guarantees future pages (including under `(app)`) are protected by default.
+// Match *all* URLs except:
+// - Next internals/static
+// - common root-level static files
+// - ANY file with an extension (covers /public assets like /Runbook.png)
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml).*)",
+    "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|.*\\..*).*)",
   ],
 };

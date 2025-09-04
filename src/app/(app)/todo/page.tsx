@@ -1,17 +1,16 @@
-// src/app/(app)/todo/page.tsx
 "use client";
 
 import { useMemo } from "react";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
-import { useMyTasks } from "@/hooks/useMyTasks";
+import { useMyTasks } from "@/hooks/useMyTasks"; // already returns *due today* tasks
 import { useTaskOccurrences } from "@/hooks/useTaskOccurrences";
-import { isDue } from "@/lib/isDue";
 
 export default function TodoPage() {
-  const { data: allTasks = [], isLoading, error } = useMyTasks();
+  // These are already *due today* tasks from the server (/api/mytasks)
+  const { data: dueTasks = [], isLoading, error } = useMyTasks();
 
-  // Compute "today" once in UTC (drop time)
+  // Compute "today" once in UTC (drop time) – needed for occurrences + display
   const todayUTC = useMemo(() => {
     const now = new Date();
     return new Date(
@@ -19,18 +18,12 @@ export default function TodoPage() {
     );
   }, []);
 
-  // Tasks due today (using business-day logic)
-  const dueTasks = useMemo(
-    () => allTasks.filter((task) => isDue(todayUTC, task)),
-    [allTasks, todayUTC]
-  );
-
-  // Load occurrences for today
+  // Load existing occurrences for today
   const { data: occurrences = [] } = useTaskOccurrences(todayUTC.toISOString());
 
-  // Merge tasks with occurrences to build "todos"
+  // Merge tasks with occurrences to build the table rows
   const todos = useMemo(() => {
-    return dueTasks.map((task) => {
+    return dueTasks.map((task: any) => {
       const occurrence = occurrences.find((occ: any) => occ.taskId === task.id);
 
       return {

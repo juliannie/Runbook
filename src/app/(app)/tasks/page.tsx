@@ -1,57 +1,49 @@
-// src/app/(app)/tasks/page.tsx
 "use client";
 
 import Link from "next/link";
 import { useMemo } from "react";
-import { useSession } from "next-auth/react";
-
+import { Button } from "@/components/ui/button";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
-import { useDeleteTask, useTasks } from "@/hooks/useTasks";
-import { Button } from "@/components/ui/button";
+import { useTasks, useDeleteTask } from "@/hooks/useTasks";
 
+/**
+ * Lists ALL tasks owned by the signed-in user (not just "due today").
+ * CRUD actions are handled by the table cells + useDeleteTask().
+ */
 export default function TasksPage() {
-  // Client-side session gate (middleware should already protect this route)
-  const { status } = useSession();
-
-  const {
-    data: tasks = [],
-    isLoading: isTasksLoading,
-    error: tasksError,
-  } = useTasks();
-
+  const { data: tasks = [], isLoading, error } = useTasks();
   const { mutate: deleteTask } = useDeleteTask();
 
-  // Prevent layout shift while auth status or data loads
-  const isLoading = status === "loading" || isTasksLoading;
+  const rows = useMemo(() => tasks, [tasks]);
 
-  const content = useMemo(() => {
-    if (isLoading) {
-      return (
-        <div className="p-6 text-sm text-muted-foreground">Loading tasks…</div>
-      );
-    }
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-6">
+        <div className="text-sm text-muted-foreground">Loading tasks…</div>
+      </div>
+    );
+  }
 
-    if (tasksError) {
-      return (
-        <div className="p-6 text-sm text-red-600">
-          Failed to load tasks: {String(tasksError)}
-        </div>
-      );
-    }
-
-    return <DataTable columns={columns} data={tasks} deleteTask={deleteTask} />;
-  }, [isLoading, tasksError, tasks, deleteTask]);
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-6">
+        <div className="text-sm text-red-600">Failed to load tasks.</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="container mx-auto px-4 py-4">
-      <div className="flex justify-end pt-4">
+    <div className="container mx-auto px-4 py-6">
+      <div className="flex justify-end">
         <Button asChild className="min-h-[44px]">
           <Link href="/tasks/add">Add Task</Link>
         </Button>
       </div>
 
-      <div className="py-3">{content}</div>
+      <div className="py-4">
+        <DataTable columns={columns} data={rows} deleteTask={deleteTask} />
+      </div>
     </div>
   );
 }
