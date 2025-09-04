@@ -82,3 +82,8 @@ cursor-rules.json
 # --- Misc ---
 # MacOS files in any subfolder
 **/.DS_Store
+
+# --- Unnecessary/temporary files ---
+test/
+*.zip
+*.zipignore
